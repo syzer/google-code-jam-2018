@@ -1,0 +1,67 @@
+var calculateDamage = (arr) => {
+  let potential = 1
+
+  return arr.reduce((acc, char) => {
+    if (char === 'S') {
+      acc += potential
+      return acc
+    }
+    potential = potential * 2
+    return acc
+  }, 0)
+}
+
+const main = (limit, str) => {
+  const howManyS = str.match(/S/g)
+
+  // returns early
+  if (!howManyS) {
+    return 0
+  }
+  if (howManyS && limit < howManyS.length) {
+    return 'IMPOSSIBLE'
+  }
+
+  let swaps = 0
+
+  while (true) {
+    let dmg = calculateDamage(str.split('')) //C+$n /
+    if (dmg <= limit) {
+      return swaps
+    }
+
+    let pos = str.lastIndexOf('CS')
+    swaps++
+    str = str.substring(0, pos) + 'SC' + str.substring(pos + 2)
+    // console.log('limit', limit, 'swaps', swaps, str, pos, calculateDamage(str.split('')))
+  }
+  // return 'IMPOSSIBLE'
+}
+
+
+// Bellow that line are dragons
+const readline = require('readline')
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
+})
+
+let i = 0
+
+rl.on('line', line => {
+  i++
+  // skip first line
+  if (i === 1) {
+    return
+  }
+  const temp = line.split(' ')
+  const limit = temp[0] // they use node 4 ... so no spread lol
+
+  const str = temp[1]
+  // console.log('<', limit, str)
+
+  let solution = main(limit, temp[1])
+
+  console.log('Case #' + (i - 1) + ': ' + solution)
+})
